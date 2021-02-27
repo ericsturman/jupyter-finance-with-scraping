@@ -64,6 +64,19 @@ def current_sp500_symbols():
                 symbols.append(td.text.strip())
     return symbols
 
+def current_dow30_symbols():
+    sp500 = requests.get("https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average")
+    soup = BeautifulSoup(sp500.content, 'html.parser')
+    symbols=[]
+    symbol_table = soup.find_all('table', id="constituents")
+    for sym in symbol_table:
+        for tr in sym.find_all("tr"):
+            td = tr.find_all("td")
+            if(td != None and len(td) > 0):
+                symbols.append(td[1].text.strip())
+    return symbols
+
+
 def parse_value(val):
     lastChar = val[-1]
     number = val[0:-1]
