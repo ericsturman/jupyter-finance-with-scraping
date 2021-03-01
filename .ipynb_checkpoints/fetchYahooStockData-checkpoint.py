@@ -21,9 +21,9 @@ def basic_stats(ticker):
             for td in t.find_all("td"):
                 stats.append(td.text)
     return statsObj
-
+#https://query1.finance.yahoo.com/v8/finance/chart/TTWO?symbol=TTWO&period1=1553835600&period2=1584507600&useYfid=true&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=y%2FiyJMFZV99&corsDomain=finance.yahoo.com
 def metadata_price_action(ticker, interval, timeRange):
-    stockData = requests.get(f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance")
+    stockData = requests.get(f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?symbol={ticker}&region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance")
     stockJson = stockData.json()
     stockResult = stockJson["chart"]["result"][0]
     stockMetadata = stockResult["meta"]
@@ -66,6 +66,18 @@ def current_sp500_symbols():
 
 def current_dow30_symbols():
     sp500 = requests.get("https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average")
+    soup = BeautifulSoup(sp500.content, 'html.parser')
+    symbols=[]
+    symbol_table = soup.find_all('table', id="constituents")
+    for sym in symbol_table:
+        for tr in sym.find_all("tr"):
+            td = tr.find_all("td")
+            if(td != None and len(td) > 0):
+                symbols.append(td[1].text.strip())
+    return symbols
+
+def current_nasdaq100_symbols():
+    sp500 = requests.get("https://en.wikipedia.org/wiki/Nasdaq-100")
     soup = BeautifulSoup(sp500.content, 'html.parser')
     symbols=[]
     symbol_table = soup.find_all('table', id="constituents")
