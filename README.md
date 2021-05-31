@@ -1,1 +1,3 @@
 # jupyter-finance-with-scraping
+
+EURUSDM5.csv file headers are:  date, open, high, low, close, volume, ...
