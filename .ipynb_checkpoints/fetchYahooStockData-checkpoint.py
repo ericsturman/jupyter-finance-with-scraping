@@ -24,7 +24,6 @@ def basic_stats(ticker):
 #https://query1.finance.yahoo.com/v8/finance/chart/TTWO?symbol=TTWO&period1=1553835600&period2=1584507600&useYfid=true&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=y%2FiyJMFZV99&corsDomain=finance.yahoo.com
 def metadata_price_action(ticker, interval, timeRange):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?symbol={ticker}&region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance"
-    print(url)
     stockData = requests.get(url)
     print(stockData.text)
     stockJson = stockData.json()
@@ -54,6 +53,27 @@ def extended_stock_stats(ticker):
             for td in t.find_all("td"):
                 dat.append(td.text)
     return datObj
+
+
+def financials_balance_sheet(ticker):
+    stockData = requests.get(f"https://finance.yahoo.com/quote/{ticker}/balance-sheet?p={ticker}")
+    soup = BeautifulSoup(stockData.content, 'html.parser')
+    job_elems = soup.find_all('section',  {"data-test":"qsp-financial"})
+    datObj={}
+    dat=[]
+    for job_elem in job_elems:
+        for t in job_elem.find_all("div"):
+            if(len(dat)==2):
+                head, *tail=np.array(dat)
+                datObj[head]=tail[0]
+            elif(len(dat)>=2):
+                head, *tail=np.array(dat)
+                datObj[head]=tail
+            dat=[]
+            for td in t.find_all("td"):
+                dat.append(td.text)
+    return datObj
+
 
 def current_sp500_symbols():
     sp500 = requests.get("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
