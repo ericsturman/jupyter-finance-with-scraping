@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import numpy as np
+from urllib.request import Request, urlopen
+import json
 
 def basic_stats(ticker):
     statsData = requests.get(f"https://finance.yahoo.com/quote/{ticker}?p={ticker}&.tsrc=fin-srch")
@@ -25,9 +27,12 @@ def basic_stats(ticker):
 #https://query1.finance.yahoo.com/v8/finance/chart/MMM?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance
 def metadata_price_action(ticker, interval, timeRange):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?symbol={ticker}&region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance"
-    stockData = requests.get(url)
-    print(stockData.text, url)
-    stockJson = stockData.json()
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
+    req = Request(url)
+    stockData = urlopen(req).read()
+    print(stockData, url)
+#     stockJson = stockData.json()
+    stockJson = json.loads(stockData)
     stockResult = stockJson["chart"]["result"][0]
     stockMetadata = stockResult["meta"]
     stockPriceData = pd.DataFrame({"timestamp": stockResult["timestamp"]})
