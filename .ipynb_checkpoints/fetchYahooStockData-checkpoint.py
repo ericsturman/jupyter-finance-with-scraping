@@ -26,6 +26,7 @@ def metadata_price_action(ticker, interval, timeRange):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?symbol={ticker}&region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance"
     print(url)
     stockData = requests.get(url)
+    print(stockData.text)
     stockJson = stockData.json()
     stockResult = stockJson["chart"]["result"][0]
     stockMetadata = stockResult["meta"]
