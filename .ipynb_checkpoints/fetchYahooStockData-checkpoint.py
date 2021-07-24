@@ -22,10 +22,11 @@ def basic_stats(ticker):
                 stats.append(td.text)
     return statsObj
 #https://query1.finance.yahoo.com/v8/finance/chart/TTWO?symbol=TTWO&period1=1553835600&period2=1584507600&useYfid=true&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=y%2FiyJMFZV99&corsDomain=finance.yahoo.com
+#https://query1.finance.yahoo.com/v8/finance/chart/MMM?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance
 def metadata_price_action(ticker, interval, timeRange):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?symbol={ticker}&region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance"
     stockData = requests.get(url)
-    print(stockData.text)
+    print(stockData.text, url)
     stockJson = stockData.json()
     stockResult = stockJson["chart"]["result"][0]
     stockMetadata = stockResult["meta"]
