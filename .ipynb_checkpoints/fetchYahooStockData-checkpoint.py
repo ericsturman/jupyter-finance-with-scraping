@@ -27,12 +27,8 @@ def basic_stats(ticker):
 #https://query1.finance.yahoo.com/v8/finance/chart/MMM?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance
 def metadata_price_action(ticker, interval, timeRange):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?symbol={ticker}&region=US&lang=en-US&includePrePost=false&interval={interval}&useYfid=true&range={timeRange}&corsDomain=finance.yahoo.com&.tsrc=finance"
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
-    req = Request(url)
-    stockData = urlopen(req).read()
-    print(stockData, url)
-#     stockJson = stockData.json()
-    stockJson = json.loads(stockData)
+#     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}
+    stockJson = getJsonData(url)
     stockResult = stockJson["chart"]["result"][0]
     stockMetadata = stockResult["meta"]
     stockPriceData = pd.DataFrame({"timestamp": stockResult["timestamp"]})
@@ -134,3 +130,18 @@ def parse_value(val):
         return float(number) / 100
     else:
         return float(number)
+    
+def getJsonData(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36'}):
+    stockData = requests.get(url, headers=headers)
+    stockJson = stockData.json()
+    print("first attempt status code:  ", stockData.status_code)
+    if(stockData.status_code != 200):
+        req = Request(url, headers)
+        stockData = urlopen(req).read()
+        stockJson = json.loads(stockData)
+        print("second attempt status code:  ", stockData.status_code)
+    return stockJson
+
+
+
+    
